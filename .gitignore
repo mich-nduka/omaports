@@ -1,0 +1,3 @@
+*.bak
+*.bak.*
+node_modules/

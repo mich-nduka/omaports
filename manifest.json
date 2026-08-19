@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.mich-nduka.omaports",
+  "name": "Omaports",
+  "version": "1.0.0",
+  "author": "Mich Nduka",
+  "license": "MIT",
+  "description": "Open dev ports on localhost in the Omarchy bar: which project holds which port, what is reachable beyond this machine, and a way to close it.",
+  "kinds": ["bar-widget"],
+  "activation": "on-demand",
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Ports",
+    "description": "Every listening port on localhost, named by the project it belongs to, with open-in-browser, copy, a terminal in the project, and kill.",
+    "category": "System",
+    "aliases": ["ports", "localhost", "dev", "listening", "sockets", "omaports"],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "refreshIntervalSec": 5,
+      "barLabel": "Dev ports",
+      "includeUdp": false,
+      "showSystemPorts": true,
+      "devPorts": "",
+      "ignorePorts": "",
+      "httpsPorts": "",
+      "warnExposed": true,
+      "killSignal": "TERM",
+      "confirmKill": true
+    },
+    "schema": [
+      {
+        "key": "refreshIntervalSec",
+        "type": "integer",
+        "label": "Refresh interval (seconds)",
+        "description": "How often the socket table is read. One `ss` call and a short walk of /proc, so this is cheap enough to leave low.",
+        "min": 2,
+        "max": 300,
+        "step": 1,
+        "defaultValue": 5
+      },
+      {
+        "key": "barLabel",
+        "type": "enum",
+        "label": "Number next to the icon",
+        "options": ["Dev ports", "All listening ports", "Nothing"],
+        "defaultValue": "Dev ports",
+        "description": "Dev ports counts what looks like something you are running; the other two count everything, or nothing at all."
+      },
+      {
+        "key": "warnExposed",
+        "type": "boolean",
+        "label": "Turn the icon urgent when a dev port is open to the network",
+        "defaultValue": true,
+        "description": "A dev server bound to 0.0.0.0 is reachable from every machine on the network you are on. This is the one thing here worth interrupting you over."
+      },
+      {
+        "key": "showSystemPorts",
+        "type": "boolean",
+        "label": "Include ports owned by other users",
+        "defaultValue": true,
+        "description": "Databases, daemons, and anything running as root. They are named where the port is well known, but never carry a process, because only root can see whose they are."
+      },
+      {
+        "key": "includeUdp",
+        "type": "boolean",
+        "label": "Include UDP sockets",
+        "defaultValue": false,
+        "description": "Off by default: a dev server listens on TCP, and the UDP table is mostly mDNS and discovery chatter."
+      },
+      {
+        "key": "devPorts",
+        "type": "string",
+        "label": "Extra dev ports",
+        "defaultValue": "",
+        "description": "Ports to always count as yours, beyond the ones already recognised. Commas, spaces, and ranges all work: 7788, 9100-9110."
+      },
+      {
+        "key": "ignorePorts",
+        "type": "string",
+        "label": "Ports to hide",
+        "defaultValue": "",
+        "description": "Dropped from every list and every count. Same format as above."
+      },
+      {
+        "key": "httpsPorts",
+        "type": "string",
+        "label": "Ports served over HTTPS",
+        "defaultValue": "",
+        "description": "Ports whose links should open as https rather than http. Same format as above."
+      },
+      {
+        "key": "killSignal",
+        "type": "enum",
+        "label": "Signal the kill action sends",
+        "options": ["TERM", "INT", "HUP"],
+        "defaultValue": "TERM",
+        "description": "The polite signal, which a dev server usually handles by shutting down cleanly. Force kill always sends KILL regardless of this."
+      },
+      {
+        "key": "confirmKill",
+        "type": "boolean",
+        "label": "Ask before killing a process",
+        "defaultValue": true
+      }
+    ]
+  }
+}
