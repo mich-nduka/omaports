@@ -40,6 +40,22 @@ and never offer a kill.
 Nothing here writes to your configuration, and the only thing it ever does to
 another process is send it the signal you asked for.
 
+## Remove
+
+```sh
+omarchy plugin remove io.github.mich-nduka.omaports
+```
+
+That takes the widget out of the bar and deletes the plugin directory. To keep
+it installed but off the bar, disable it instead:
+
+```sh
+omarchy plugin disable io.github.mich-nduka.omaports
+```
+
+Neither leaves anything behind. The only thing this plugin ever writes is its
+own entry in `~/.config/omarchy/shell.json`, which `remove` takes with it.
+
 ## Usage
 
 Click the icon to open or close the panel. Press Escape to close it.
