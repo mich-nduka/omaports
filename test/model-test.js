@@ -313,4 +313,37 @@ function rowFor(port) {
   assert.ok(M.killMessage([rowFor(3000), rowFor(8000)]).indexOf("2 processes") > 0)
 }
 
+// ------------------------------------------------------- markup in /proc
+//
+// A process names its own comm, argv, and working directory, and Qt's Text
+// defaults to AutoText — it parses anything tag-shaped as rich text and
+// fetches whatever an <img> in it points at. The rows pin
+// textFormat: Text.PlainText; the two sinks that cannot be pinned are
+// covered by plainText() instead.
+{
+  assert.strictEqual(M.plainText('<img src="http://evil/x">'), 'img src="http://evil/x"')
+  assert.strictEqual(M.plainText("<b>bold</b>"), "bbold/b")
+  assert.strictEqual(M.plainText(""), "")
+  assert.strictEqual(M.plainText(null), "")
+  assert.strictEqual(M.plainText(undefined), "")
+  // No angle bracket survives, so nothing downstream can look like a tag.
+  assert.ok(M.plainText("<!DOCTYPE html><html>").indexOf("<") < 0)
+
+  // The confirm dialog is the sink that cannot be pinned, so a hostile
+  // process name has to come out clean there.
+  const hostile = M.buildRows(M.parseProbe([
+    "SELF\t1000",
+    "SSRC\t0",
+    'SOCK\tLISTEN 0 511 127.0.0.1:3000 0.0.0.0:* users:(("x",pid=999,fd=3))',
+    'PROC\t999\t1000\t<img src="http://evil/x">\t/home/mich/p\t10\t/home/mich/p\tserver'
+  ].join("\n")), { home: "/home/mich" })
+  const message = M.killMessage(hostile)
+  assert.ok(message.indexOf("<") < 0, message)
+  assert.ok(message.indexOf(">") < 0, message)
+
+  // A path with a shell redirect in it is still shown as written, because
+  // the rows that carry it are pinned rather than stripped.
+  assert.ok(M.metaLine(rowFor(3000), "/home/mich").indexOf("~/Projects/nexahubtech") > 0)
+}
+
 console.log("ok — model tests passed")

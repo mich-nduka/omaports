@@ -814,10 +814,25 @@ function killable(item, selfUid) {
   return item.uid === selfUid
 }
 
+// Text heading for a component whose `textFormat` this plugin cannot set —
+// the confirm dialog's message, the bar tooltip — goes through here first.
+//
+// Qt's Text defaults to AutoText, which parses anything tag-shaped as rich
+// text and will fetch whatever an <img> inside it points at. Every string
+// this plugin displays starts life in another process's /proc entry, and a
+// process names its own comm, argv, and working directory, so a hostile one
+// could hand the shell markup to load. Rows and headers pin
+// `textFormat: Text.PlainText` instead, which keeps a path containing a
+// shell redirect intact; only these two sinks, which cannot be pinned, lose
+// their angle brackets.
+function plainText(value) {
+  return String(value === undefined || value === null ? "" : value).replace(/[<>]/g, "")
+}
+
 function killMessage(items) {
   var list = items || []
   if (list.length === 1) {
-    return "Kill " + displayName(list[0]) + " on port " + list[0].port + "?"
+    return "Kill " + plainText(displayName(list[0])) + " on port " + list[0].port + "?"
   }
   return "Kill " + list.length + " processes?"
 }
@@ -883,6 +898,7 @@ if (typeof module !== "undefined") {
     copyCommand: copyCommand,
     terminalCommand: terminalCommand,
     killable: killable,
+    plainText: plainText,
     killMessage: killMessage
   }
 }

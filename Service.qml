@@ -79,7 +79,7 @@ Item {
     if (exitCode !== 0 || !parsed.ok) {
       installed = exitCode !== 127
       reachable = false
-      lastError = Model.elide(stderr || "ss did not answer", 90)
+      lastError = Model.plainText(Model.elide(stderr || "ss did not answer", 90))
       rows = []
       stats = Model.summary([])
       hasProblem = false

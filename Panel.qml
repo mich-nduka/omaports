@@ -510,6 +510,7 @@ Panel {
           iconComponent: Component {
             Text {
               text: root.glyph
+              textFormat: Text.PlainText
               color: root.iconColor
               font.family: root.fontFamily
               font.pixelSize: Style.font.display
@@ -526,6 +527,7 @@ Panel {
           visible: server.actionStatus !== "" || server.lastError !== ""
           width: parent.width
           text: server.actionStatus !== "" ? server.actionStatus : server.lastError
+          textFormat: Text.PlainText
           color: server.lastError !== "" && server.actionStatus === "" ? root.urgent : root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.bodySmall
@@ -623,6 +625,7 @@ Panel {
             text: root.selectedCount > 0
               ? (root.selectedCount === 1 ? "1 selected" : root.selectedCount + " selected")
               : Model.formatCount(root.visibleRows.length, "port", "ports")
+            textFormat: Text.PlainText
             color: root.dim
             font.family: root.fontFamily
             font.pixelSize: Style.font.caption
@@ -691,6 +694,7 @@ Panel {
 
         Text {
           id: emptyLabel
+          textFormat: Text.PlainText
           visible: root.visibleRows.length === 0
           anchors.left: parent.left
           anchors.right: parent.right
@@ -754,6 +758,7 @@ Panel {
                       + (modelData.exposed > 0 ? "  ·  " + modelData.exposed + " exposed" : "")
                     foreground: modelData.exposed > 0 && modelData.dev > 0 ? root.urgent : root.foreground
                     fontFamily: root.fontFamily
+                    textFormat: Text.PlainText
 
                     TapHandler {
                       gesturePolicy: TapHandler.ReleaseWithinBounds
@@ -795,6 +800,7 @@ Panel {
           anchors.verticalCenter: parent.verticalCenter
           text: server.stats.total + " listening · " + server.stats.mine + " yours"
             + (server.includeUdp ? " · tcp+udp" : "")
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
@@ -931,6 +937,7 @@ Panel {
         Text {
           Layout.fillWidth: true
           text: Model.primaryLabel(row.item)
+          textFormat: Text.PlainText
           color: row.item && row.item.exposed && row.item.dev ? root.urgent : root.foreground
           font.family: root.fontFamily
           font.pixelSize: Style.font.body
@@ -940,6 +947,7 @@ Panel {
         Text {
           Layout.fillWidth: true
           text: Model.metaLine(row.item, server.home)
+          textFormat: Text.PlainText
           color: root.dim
           font.family: root.fontFamily
           font.pixelSize: Style.font.caption
